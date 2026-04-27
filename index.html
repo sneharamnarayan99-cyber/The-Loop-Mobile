@@ -76,9 +76,13 @@ html,body{width:100%;height:100%;min-height:100dvh;overflow:hidden;font-family:'
 #hud-left{display:flex;align-items:center;gap:8px;overflow:hidden;min-width:0}
 #hlives{display:flex;gap:1px;font-size:12px;flex-shrink:0;line-height:1}
 #hsname{
-  font-size:7px;color:rgba(255,255,255,.42);letter-spacing:.8px;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;font-weight:700;
-  font-family:'Orbitron',monospace;max-width:30vw
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 8px;
+  font-size:9px;color:#f5f5f5;letter-spacing:.6px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;font-weight:800;
+  font-family:'Orbitron',monospace;max-width:44vw;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
+  border-radius:999px;text-shadow:0 1px 0 rgba(0,0,0,.55)
 }
 #hud-center{display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 4px;min-width:0}
 #hprog-label{font-size:7px;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase;font-family:'Orbitron',monospace;font-weight:700}
@@ -1001,15 +1005,15 @@ function makeLevel(lvl,GY){
   var seed=(lvl+1)*6271, rng=function(n){return((Math.sin(n*seed*0.731+n)*43758.5)%1+1)%1;};
   var easy=lvl===0, diff=easy?0:lvl/11, len=easy?3000:4800+lvl*700;
   var plats=[],coins=[],monsters=[],hazards=[],boxes=[],gaps=[];
-  // Lower and wider starter ground to suit mobile reach
+  // Starter ground and floating platforms tuned for mobile portrait play
   plats.push({x:0,y:GY,w:easy?420:320,h:72,grnd:true});
   var cur=easy?420:320,ci=0;
   while(cur<len){
     var r=function(n){return rng(ci*113+n);};
     var gap=easy?32+r(1)*22:42+r(1)*(24+diff*8); cur+=gap;
     var pw=easy?128+r(2)*92:Math.max(96,114+r(2)*92-diff*10);
-    // Bring platforms lower so they are easier to reach on mobile
-    var py=easy?GY-(30+r(3)*14):GY-(36+r(3)*(18+diff*6));
+    // Raise platforms a bit so they read clearly above the ground
+    var py=easy?GY-(72+r(3)*18):GY-(84+r(3)*(24+diff*8));
     plats.push({x:cur,y:py,w:pw,h:12,grnd:false});
     var cn=easy?2+Math.floor(r(4)*2):1+Math.floor(r(4)*3);
     for(var c=0;c<cn;c++) coins.push({x:cur+(pw/(cn+1))*(c+1),y:py-20-r(c+5)*10,r:9,taken:false,bob:r(c+6)*Math.PI*2});
@@ -1076,7 +1080,7 @@ function startGame(level){
     document.getElementById('hud').style.borderBottomColor=st.ac+'30';
     document.getElementById('hfill').style.background='linear-gradient(90deg,'+st.pl+','+st.ac+')';
     document.getElementById('hfill').style.boxShadow='0 0 6px '+st.ac+'70';
-    document.getElementById('hsname').textContent=st.ic+' '+st.name.replace(/^The\s+/,'');
+    document.getElementById('hsname').textContent=st.ic+' '+st.name+' · '+st.sub;
     document.getElementById('hshopbtn').textContent='🛒';
     document.getElementById('hpausebtn').textContent='⏸';
     document.getElementById('hquitbtn').textContent='✕';
