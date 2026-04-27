@@ -369,8 +369,9 @@ html,body{
     grid-template-columns:repeat(4,minmax(0,1fr));
     align-items:stretch;
     height:auto;
-    padding:8px 10px calc(10px + var(--safe-bottom));
+    padding:8px 10px calc(12px + var(--safe-bottom));
     gap:8px;
+    touch-action:none;
   }
   .ctrl-arrows,.ctrl-actions{
     display:contents;
@@ -965,11 +966,40 @@ var G=null, RAF=null, PAUSED=false, KEYS={}, TOUCH={left:false,right:false}, MAX
 // Controls
 (function(){
   var bl=document.getElementById('btnL'),br=document.getElementById('btnR'),jb=document.getElementById('jbtn');
-  function pd(d){return function(e){e.preventDefault();TOUCH[d]=true;};}
-  function pu(d){return function(){TOUCH[d]=false;};}
-  bl.addEventListener('pointerdown',pd('left'),{passive:false}); bl.addEventListener('pointerup',pu('left')); bl.addEventListener('pointerleave',pu('left')); bl.addEventListener('pointercancel',pu('left'));
-  br.addEventListener('pointerdown',pd('right'),{passive:false}); br.addEventListener('pointerup',pu('right')); br.addEventListener('pointerleave',pu('right')); br.addEventListener('pointercancel',pu('right'));
-  jb.addEventListener('pointerdown',function(e){e.preventDefault();if(G)G.jbuf=10;},{passive:false});
+
+  function holdBind(el, key){
+    var activeId=null;
+    function down(e){
+      e.preventDefault();
+      TOUCH[key]=true;
+      activeId=e.pointerId;
+      try{ if(el.setPointerCapture) el.setPointerCapture(e.pointerId); }catch(_){}
+    }
+    function up(e){
+      e.preventDefault();
+      if(activeId!==null && e.pointerId!==undefined && e.pointerId!==activeId) return;
+      TOUCH[key]=false;
+      activeId=null;
+      try{ if(el.releasePointerCapture && e.pointerId!==undefined) el.releasePointerCapture(e.pointerId); }catch(_){}
+    }
+    el.addEventListener('pointerdown',down,{passive:false});
+    el.addEventListener('pointerup',up,{passive:false});
+    el.addEventListener('pointercancel',up,{passive:false});
+    el.addEventListener('lostpointercapture',function(){ TOUCH[key]=false; activeId=null; },{passive:true});
+    el.addEventListener('touchstart',function(e){ e.preventDefault(); TOUCH[key]=true; },{passive:false});
+    el.addEventListener('touchend',function(e){ e.preventDefault(); TOUCH[key]=false; },{passive:false});
+    el.addEventListener('touchcancel',function(e){ e.preventDefault(); TOUCH[key]=false; },{passive:false});
+  }
+
+  holdBind(bl,'left');
+  holdBind(br,'right');
+
+  function jumpTap(e){
+    e.preventDefault();
+    if(G) G.jbuf=12;
+  }
+  jb.addEventListener('pointerdown',jumpTap,{passive:false});
+  jb.addEventListener('touchstart',jumpTap,{passive:false});
 })();
 document.addEventListener('keydown',function(e){
   KEYS[e.code]=true;
@@ -1003,17 +1033,17 @@ function makeLevel(lvl,GY){
   var seed=(lvl+1)*6271, rng=function(n){return((Math.sin(n*seed*0.731+n)*43758.5)%1+1)%1;};
   var easy=lvl===0, diff=easy?0:lvl/11, len=easy?3000:4800+lvl*700;
   var plats=[],coins=[],monsters=[],hazards=[],boxes=[],gaps=[];
-  // Smaller starter ground so the scene feels like a platformer, not a runway
-  plats.push({x:0,y:GY,w:easy?260:220,h:72,grnd:true});
-  var cur=easy?260:220,ci=0;
+  // Keep the first ground readable on mobile and make floating platforms easier to reach
+  plats.push({x:0,y:GY,w:easy?320:260,h:72,grnd:true});
+  var cur=easy?320:260,ci=0;
   while(cur<len){
     var r=function(n){return rng(ci*113+n);};
-    // Wider spacing between floating platforms
-    var gap=easy?90+r(1)*90:110+r(1)*(110+diff*50); cur+=gap;
-    // Narrower platforms to match the visual reference
-    var pw=easy?80+r(2)*55:Math.max(60,70+r(2)*65-diff*10);
-    // Platforms float at varied heights, closer to the reference image
-    var py=easy?GY-(105+r(3)*55):GY-(95+r(3)*(75+diff*45));
+    // Slightly tighter spacing so the stage still feels active on a narrow screen
+    var gap=easy?72+r(1)*70:95+r(1)*(95+diff*35); cur+=gap;
+    // Wider platforms help mobile jumps feel fair without removing challenge
+    var pw=easy?92+r(2)*70:Math.max(70,82+r(2)*78-diff*8);
+    // Lower platform height so jumps can actually land on them on mobile
+    var py=easy?GY-(74+r(3)*38):GY-(72+r(3)*(48+diff*20));
     plats.push({x:cur,y:py,w:pw,h:12,grnd:false});
     // Fewer coins per platform, with looser placement
     var cn=easy?2+Math.floor(r(4)*2):1+Math.floor(r(4)*3);
@@ -1084,7 +1114,7 @@ function startGame(level){
     document.getElementById('hsname').textContent=st.ic+' '+st.name+' · '+st.sub;
     document.getElementById('hpausebtn').style.color=st.ac;
     document.getElementById('hpausebtn').style.borderColor=st.ac+'44';
-    document.getElementById('jbtn').style.cssText='height:50px;padding:0 22px;min-width:88px;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:1px;touch-action:none;user-select:none;border:2px solid '+st.ac+'77;color:'+st.ac+';background:'+st.ac+'18';
+    document.getElementById('jbtn').style.cssText='height:50px;padding:0 18px;min-width:88px;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:1px;touch-action:none;user-select:none;border:2px solid '+st.ac+'77;color:'+st.ac+';background:'+st.ac+'18';
 
     G={
       p:{x:140*S, y:GY-24*S, vy:0, gr:false, fr:0, coy:0, dead:false, dt:0, prevY:GY-24*S},
@@ -1113,11 +1143,11 @@ function startGame(level){
 
     // Jump
     if(g.jbuf>0)g.jbuf--; if(p.coy>0)p.coy--;
-    var jf=(g.act.boots?-16:g.act.fly?-10:-13)*S;
+    var jf=(g.act.boots?-17:g.act.fly?-11:-15)*S;
     if(g.jbuf>0&&(p.gr||p.coy>0||g.act.fly)){p.vy=jf;p.gr=false;p.coy=0;g.jbuf=0;addPts(p.x,p.y+18*S,6,'#fff');}
 
     // Gravity
-    p.vy=Math.min(p.vy+(g.act.fly?.18:.52)*S,15*S); p.y+=p.vy;
+    p.vy=Math.min(p.vy+(g.act.fly?.16:.42)*S,13*S); p.y+=p.vy;
 
     // Collision — one-way platforms (land from above only)
     var inGap=function(){return lv2.gaps.some(function(ga){return p.x+15*S>ga.x&&p.x-15*S<(ga.x+ga.w);});};
@@ -1127,7 +1157,7 @@ function startGame(level){
       lv2.plats.forEach(function(pl){
         if(pl.grnd) return;
         var px=pl.x, py2=pl.y, pw=pl.w*S;
-        if(p.x+10*S>px&&p.x-10*S<px+pw&&p.vy>=0){
+        if(p.x+12*S>px&&p.x-12*S<px+pw&&p.vy>=0){
           var pf=p.prevY+24*S, cf=p.y+24*S;
           if(pf<=py2+2&&cf>=py2){p.y=py2-24*S;p.vy=0;land=true;}
         }
