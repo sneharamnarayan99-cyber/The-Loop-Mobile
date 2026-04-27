@@ -62,37 +62,53 @@ html,body{width:100%;height:100%;min-height:100dvh;overflow:hidden;font-family:'
 #hud{
   position:relative;
   z-index:20;
-  display:grid;
-  grid-template-columns:auto minmax(0,1fr) auto;
-  align-items:center;
-  gap:6px;
-  background:rgba(0,0,0,.88);
-  padding:5px 8px 5px;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  background:rgba(0,0,0,.9);
+  padding:6px 8px 7px;
   width:100%;
   flex-shrink:0;
   border-bottom:1px solid rgba(255,255,255,.08);
-  min-height:36px;
 }
-#hud-left{display:flex;align-items:center;gap:8px;overflow:hidden;min-width:0}
-#hlives{display:flex;gap:1px;font-size:12px;flex-shrink:0;line-height:1}
-#hsname{
-  display:inline-flex;align-items:center;gap:4px;
-  padding:4px 8px;
-  font-size:9px;color:#f5f5f5;letter-spacing:.6px;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;font-weight:800;
-  font-family:'Orbitron',monospace;max-width:44vw;
-  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
-  border-radius:999px;text-shadow:0 1px 0 rgba(0,0,0,.55)
+#hud-top{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:6px;
+  width:100%;
 }
-#hud-center{display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 4px;min-width:0}
-#hprog-label{font-size:7px;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase;font-family:'Orbitron',monospace;font-weight:700}
-#hbar{height:4px;background:rgba(255,255,255,.1);border-radius:999px;overflow:hidden;width:100%}
-#hfill{height:100%;width:0%;border-radius:999px;transition:width .12s linear}
-#hud-right{display:flex;align-items:center;gap:5px;justify-content:flex-end;min-width:0}
+#hud-left{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  overflow:hidden;
+  min-width:0;
+}
+#hlives{
+  display:flex;
+  gap:1px;
+  font-size:12px;
+  flex-shrink:0;
+  line-height:1;
+}
+#hud-right{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  justify-content:flex-end;
+  min-width:0;
+  flex-wrap:nowrap;
+}
 .hud-val{
-  display:flex;align-items:center;gap:3px;flex-shrink:0;
-  padding:3px 6px;background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.08);border-radius:10px
+  display:flex;
+  align-items:center;
+  gap:3px;
+  flex-shrink:0;
+  padding:3px 6px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;
 }
 .hud-val-num{font-size:11px;font-weight:900;font-family:'Orbitron',monospace;line-height:1}
 .hud-divider{width:1px;height:14px;background:rgba(255,255,255,.1);flex-shrink:0}
@@ -103,7 +119,42 @@ html,body{width:100%;height:100%;min-height:100dvh;overflow:hidden;font-family:'
   letter-spacing:.5px;white-space:nowrap;line-height:1;
   display:inline-flex;align-items:center;justify-content:center
 }
-
+#hud-mid{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  width:100%;
+}
+#hsname{
+  display:block;
+  width:100%;
+  text-align:center;
+  padding:5px 10px;
+  font-size:10px;
+  color:#f5f5f5;
+  letter-spacing:1px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  text-transform:uppercase;
+  font-weight:800;
+  font-family:'Orbitron',monospace;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:999px;
+  text-shadow:0 1px 0 rgba(0,0,0,.55)
+}
+#hud-center{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  padding:0 2px;
+  min-width:0;
+}
+#hprog-label{font-size:7px;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase;font-family:'Orbitron',monospace;font-weight:700}
+#hbar{height:4px;background:rgba(255,255,255,.1);border-radius:999px;overflow:hidden;width:100%}
+#hfill{height:100%;width:0%;border-radius:999px;transition:width .12s linear}
 /* Active boosts strip */
 #act-bar{display:none;position:relative;z-index:20;flex-wrap:wrap;gap:4px;padding:3px 8px 4px;background:rgba(0,0,0,.82);width:100%;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06)}
 .act-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-size:9px;font-weight:700;font-family:'Orbitron',monospace}
@@ -303,20 +354,18 @@ html,body{
   #pg-game{justify-content:flex-start}
 
   #hud{
-    grid-template-columns:auto minmax(0,1fr) auto;
     gap:4px;
-    min-height:32px;
-    padding:4px 7px 4px;
+    min-height:0;
+    padding:6px 7px 7px;
     border-radius:0 0 14px 14px;
-    background:rgba(0,0,0,.88);
+    background:rgba(0,0,0,.9);
     backdrop-filter:blur(10px);
+  }
+  #hud-top{
+    gap:5px;
   }
   #hud-left{gap:4px}
   #hlives{font-size:11px;gap:1px}
-  #hsname{font-size:7px;letter-spacing:.8px;max-width:24vw}
-  #hud-center{padding:0;gap:1px}
-  #hprog-label{display:none}
-  #hbar{height:4px}
   #hud-right{gap:3px}
   .hud-val{
     padding:3px 5px;
@@ -325,8 +374,72 @@ html,body{
   .hud-val-num{font-size:10px}
   .hhbtn{
     width:30px;height:30px;min-width:30px;
-    border-radius:9px;font-size:13px
+    border-radius:9px;
+    font-size:13px
   }
+  #hud-mid{
+    gap:3px;
+  }
+  #hsname{
+    font-size:8px;
+    letter-spacing:.8px;
+    padding:4px 8px;
+  }
+  #hud-center{padding:0;gap:1px}
+  #hprog-label{font-size:6px}
+  #hbar{height:4px}
+  #act-bar{
+    padding:3px 7px 4px;
+    gap:4px;
+  }
+  .act-pill{
+    font-size:8px;
+    padding:3px 7px;
+  }
+  #ctrl{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    align-items:center;
+    height:auto;
+    padding:7px 8px calc(10px + var(--safe-bottom));
+    gap:6px;
+  }
+  .cmb,#inv-btn,#jbtn{
+    width:100%;
+    min-width:0;
+    height:52px;
+    border-radius:15px;
+  }
+  .cmb{
+    font-size:24px;
+  }
+  #inv-btn{
+    padding:5px 7px;
+  }
+  #inv-btn .ie{font-size:20px}
+  #inv-btn .it{font-size:7px}
+  #jbtn{
+    padding:0 10px;
+    font-size:14px;
+  }
+  #inv-drawer{
+    left:6px;
+    right:6px;
+    bottom:calc(6px + var(--safe-bottom));
+    max-height:48%;
+    border-radius:18px;
+  }
+  .id-slots{
+    gap:8px;
+  }
+  .id-slot{
+    min-width:calc(50% - 4px);
+    flex:1 1 calc(50% - 4px);
+  }
+  .lv-stats,.ov-stats{
+    grid-template-columns:1fr 1fr;
+  }
+  .lv-acts,.ov-acts{gap:10px}
+}
   #act-bar{
     padding:3px 7px 4px;
     gap:4px;
@@ -382,12 +495,18 @@ html,body{
 
 @media (max-width: 520px){
   #hud{
-    gap:4px;
     padding-left:6px;
     padding-right:6px;
   }
-  #hud-left{gap:4px}
-  #hsname{max-width:24vw}
+  #hud-top{
+    gap:4px;
+  }
+  #hlives{font-size:10px}
+  #hsname{
+    font-size:7px;
+    letter-spacing:.6px;
+    padding:4px 7px;
+  }
   .hud-val{
     padding:3px 5px;
   }
@@ -461,31 +580,32 @@ html,body{
 <!-- GAME -->
 <div id="pg-game" class="page">
   <div id="hud">
-    <!-- Left: lives + stage name -->
-    <div id="hud-left">
-      <div id="hlives"></div>
+    <div id="hud-top">
+      <div id="hud-left">
+        <div id="hlives"></div>
+      </div>
+      <div id="hud-right">
+        <div class="hud-val">
+          <span style="font-size:14px">🪙</span>
+          <span class="hud-val-num" id="hcoins" style="color:#ffc107">0</span>
+        </div>
+        <div class="hud-divider"></div>
+        <div class="hud-val">
+          <span style="font-size:11px;color:rgba(255,255,255,.4);font-family:'Orbitron',monospace;font-weight:700;letter-spacing:1px">SCR</span>
+          <span class="hud-val-num" id="hscore" style="color:#26c6da">0</span>
+        </div>
+        <div class="hud-divider"></div>
+        <button class="hhbtn" id="hshopbtn" onclick="openShop('game')" style="color:#ffc107;border-color:rgba(255,193,7,.4)">🛒</button>
+        <button class="hhbtn" id="hpausebtn" onclick="togglePause()" style="color:rgba(255,255,255,.65);border-color:rgba(255,255,255,.2)">⏸</button>
+        <button class="hhbtn" id="hquitbtn" onclick="quitGame()" style="color:#f87171;border-color:rgba(248,113,113,.35)">✕</button>
+      </div>
+    </div>
+    <div id="hud-mid">
       <span id="hsname">-</span>
-    </div>
-    <!-- Center: progress bar -->
-    <div id="hud-center">
-      <div id="hprog-label">PROGRESS</div>
-      <div id="hbar"><div id="hfill"></div></div>
-    </div>
-    <!-- Right: coins · score · buttons -->
-    <div id="hud-right">
-      <div class="hud-val">
-        <span style="font-size:14px">🪙</span>
-        <span class="hud-val-num" id="hcoins" style="color:#ffc107">0</span>
+      <div id="hud-center">
+        <div id="hprog-label">PROGRESS</div>
+        <div id="hbar"><div id="hfill"></div></div>
       </div>
-      <div class="hud-divider"></div>
-      <div class="hud-val">
-        <span style="font-size:11px;color:rgba(255,255,255,.4);font-family:'Orbitron',monospace;font-weight:700;letter-spacing:1px">SCR</span>
-        <span class="hud-val-num" id="hscore" style="color:#26c6da">0</span>
-      </div>
-      <div class="hud-divider"></div>
-      <button class="hhbtn" id="hshopbtn" onclick="openShop('game')" style="color:#ffc107;border-color:rgba(255,193,7,.4)">🛒 Shop</button>
-      <button class="hhbtn" id="hpausebtn" onclick="togglePause()" style="color:rgba(255,255,255,.65);border-color:rgba(255,255,255,.2)">⏸ Pause</button>
-      <button class="hhbtn" id="hquitbtn" onclick="quitGame()" style="color:#f87171;border-color:rgba(248,113,113,.35)">✕ Quit</button>
     </div>
   </div>
   <div id="act-bar"></div>
